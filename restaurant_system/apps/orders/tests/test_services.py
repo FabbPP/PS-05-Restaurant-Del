@@ -12,13 +12,13 @@ def test_create_order_dine_in_occupied_table(table, waiter):
     with pytest.raises(ValidationError, match="ya está ocupada"):
         create_order(order_type=OrderType.DINE_IN, table=table, waiter=waiter)
 
-def test_add_item_invalid_order_status(order_dine_in, product_active, stock_item):
+def test_add_item_invalid_order_status(order_dine_in, product, stock_item):
     """Test de validación: No agregar items a órdenes cerradas."""
     order_dine_in.status = OrderStatus.DELIVERED
     order_dine_in.save()
     
     with pytest.raises(ValidationError, match="No se pueden añadir ítems"):
-        add_item(order=order_dine_in, product=product_active, quantity=1, unit_price=Decimal("10.00"))
+        add_item(order=order_dine_in, product=product, quantity=1, unit_price=Decimal("10.00"))
 
 @pytest.mark.parametrize("status_flow", [
     [OrderStatus.PENDING, OrderStatus.PREPARING, OrderStatus.READY], # Válido
@@ -32,9 +32,9 @@ def test_order_fsm_transitions(order_dine_in, status_flow):
     except Exception:
         assert status_flow == [OrderStatus.PENDING, OrderStatus.READY] # Solo debe fallar en este caso
 
-def test_order_recalc_total_integration(order_dine_in, product_active, stock_item):
+def test_order_recalc_total_integration(order_dine_in, product, stock_item):
     """Test funcional: Cálculo exacto de totales."""
-    add_item(order=order_dine_in, product=product_active, quantity=2, unit_price=Decimal("15.00"))
+    add_item(order=order_dine_in, product=product, quantity=2, unit_price=Decimal("15.00"))
     order_dine_in.refresh_from_db()
     assert order_dine_in.total == Decimal("30.00")
 
