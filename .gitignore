@@ -1,0 +1,23 @@
+# Virtual env
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+db.sqlite3
+media/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store

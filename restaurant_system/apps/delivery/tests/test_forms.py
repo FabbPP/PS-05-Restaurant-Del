@@ -1,6 +1,7 @@
 import pytest
 from decimal import Decimal
 from apps.delivery.forms import DeliveryInfoForm
+from apps.core.enums import CourierStatus
 
 
 @pytest.mark.parametrize("phone, is_valid", [
@@ -18,6 +19,7 @@ def test_delivery_form_phone_validation(order_delivery, phone, is_valid):
         "address": "Calle Principal 123",
         "phone": phone,
         "distance_km": 5.0,
+        "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
     assert form.is_valid() is is_valid
@@ -38,6 +40,7 @@ def test_delivery_form_address_robustness(order_delivery, address, is_valid):
         "address": address,
         "phone": "999888777",
         "distance_km": 1.0,
+            "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
     assert form.is_valid() is is_valid
@@ -57,6 +60,7 @@ def test_delivery_form_distance_math(order_delivery, distance, is_valid):
         "address": "Calle Falsa 123",
         "phone": "999888777",
         "distance_km": distance,
+            "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
     assert form.is_valid() is is_valid

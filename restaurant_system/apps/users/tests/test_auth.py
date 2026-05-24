@@ -5,7 +5,7 @@ from tests.factories import UserFactory
 @pytest.mark.auth
 def test_login_invalid_credentials(client):
     """PE: Intento de login con credenciales erróneas."""
-    url = "/users/login/" # Asumiendo ruta estándar
+    url = reverse('login') # O 'users:login' dependiendo de tu urls.py
     response = client.post(url, {"username": "wrong", "password": "wrongpassword"})
     assert response.status_code in [401, 200] # Depende si es API o Template
     if response.status_code == 200:
@@ -18,7 +18,7 @@ def test_login_inactive_user(client, db):
     user.set_password("valid_pass")
     user.save()
     
-    response = client.post("/users/login/", {"username": user.username, "password": "valid_pass"})
+    response = client.post(reverse('login'), {"username": user.username, "password": "valid_pass"})
     # El sistema debe rechazar el acceso a usuarios inactivos
     assert response.status_code != 302 # No debe redireccionar al dashboard
 
@@ -31,7 +31,7 @@ def test_login_inactive_user(client, db):
 ])
 def test_login_boundary_robustness(client, username, password):
     """AVL/Robustez: Campos de autenticación con valores límite."""
-    response = client.post("/users/login/", {
+    response = client.post(reverse('login'), {
         "username": username,
         "password": password
     })

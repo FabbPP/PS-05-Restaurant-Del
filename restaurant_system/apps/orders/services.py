@@ -87,7 +87,7 @@ def change_status(*, order: Order, new_status: str) -> None:
         OrderStatus.CANCELED: set(),
     }
     if new_status == order.status or new_status not in allowed.get(order.status, set()):
-        raise OrderStateError("Transición de estado inválida.")
+        raise ValidationError("Transición de estado inválida.")
     OrderStatusHistory.objects.create(order=order, from_status=order.status, to_status=new_status)
     order.status = new_status
     order.save()

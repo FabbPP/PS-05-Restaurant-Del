@@ -46,22 +46,22 @@ def test_order_recalc_total_integration(order_dine_in, product_active, stock_ite
     0,
     1000000, # Fuera de rango lógico de un restaurante
 ])
-def test_add_item_nan_and_limits(order_dine_in, product_active, stock_item, quantity):
+def test_add_item_nan_and_limits(order_dine_in, product, stock_item, quantity):
     """AVL/Robustez: Evitar que valores no finitos o absurdos corrompan el Stock."""
     with pytest.raises(ValidationError):
         add_item(
             order=order_dine_in, 
-            product=product_active, 
+            product=product, 
             quantity=quantity, 
             unit_price=Decimal("10.00")
         )
 
 @pytest.mark.robustness
-def test_order_duplicate_item_handling(order_dine_in, product_active, stock_item):
+def test_order_duplicate_item_handling(order_dine_in, product, stock_item):
     """PE: Manejo de duplicados. Agregar el mismo producto dos veces."""
-    add_item(order=order_dine_in, product=product_active, quantity=1, unit_price=Decimal("10.00"))
+    add_item(order=order_dine_in, product=product, quantity=1, unit_price=Decimal("10.00"))
     # Segunda adición debe funcionar acumulando o creando registro nuevo según lógica
-    item2 = add_item(order=order_dine_in, product=product_active, quantity=1, unit_price=Decimal("10.00"))
+    item2 = add_item(order=order_dine_in, product=product, quantity=1, unit_price=Decimal("10.00"))
     assert item2.id is not None
     
 @pytest.mark.fsm
