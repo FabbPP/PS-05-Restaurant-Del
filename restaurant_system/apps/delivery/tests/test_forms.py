@@ -22,6 +22,7 @@ def test_delivery_form_phone_validation(order_delivery, phone, is_valid):
         "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
+    """print(form.errors)"""
     assert form.is_valid() is is_valid
     if not is_valid:
         assert "phone" in form.errors
@@ -43,6 +44,7 @@ def test_delivery_form_address_robustness(order_delivery, address, is_valid):
             "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
+    """print(form.errors)"""
     assert form.is_valid() is is_valid
 
 
@@ -63,4 +65,5 @@ def test_delivery_form_distance_math(order_delivery, distance, is_valid):
             "courier_status": CourierStatus.ASSIGNED,
     }
     form = DeliveryInfoForm(data=data)
+    """print(form.errors)"""
     assert form.is_valid() is is_valid

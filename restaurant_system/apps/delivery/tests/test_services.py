@@ -15,7 +15,14 @@ def test_calculate_fee_logic(distance, expected_fee):
 def test_assign_inactive_courier(order_delivery, courier):
     """Test de excepción: Repartidor no disponible."""
     from apps.delivery.models import DeliveryInfo
-    info = DeliveryInfo.objects.create(order=order_delivery, address="Calle 1", phone="123456789", distance_km=5)
+    info = DeliveryInfo.objects.create(
+        order=order_delivery, 
+        address="Calle 1", 
+        phone="123456789", 
+        distance_km=Decimal("5.00"),
+        estimated_time_min=40,
+        delivery_fee=Decimal("10.00")
+    )
     
     courier.is_available = False
     courier.save()
@@ -27,7 +34,14 @@ def test_assign_inactive_courier(order_delivery, courier):
 def test_delivery_fsm_protection(order_delivery, courier):
     """Test de validación: Protección de flujo de despacho."""
     from apps.delivery.models import DeliveryInfo
-    info = DeliveryInfo.objects.create(order=order_delivery, address="Calle 1", phone="123456789", distance_km=5)
+    info = DeliveryInfo.objects.create(
+        order=order_delivery, 
+        address="Calle 1", 
+        phone="123456789", 
+        distance_km=Decimal("5.00"),
+        estimated_time_min=40,
+        delivery_fee=Decimal("10.00")
+    )
     
     # Intentar marcar como entregado sin estar en camino
     with pytest.raises(EstadoInvalidoError):

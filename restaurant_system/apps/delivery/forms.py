@@ -33,6 +33,8 @@ class DeliveryInfoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["delivery_fee"].required = False
         self.fields["estimated_time_min"].required = False
+        self.fields["courier"].required = False
+        self.fields["courier_status"].required = False
 
     def clean_phone(self):
         phone = self.cleaned_data.get("phone", "")
@@ -63,10 +65,20 @@ class DeliveryInfoForm(forms.ModelForm):
         cleaned_data = super().clean()
         try:
             distance = cleaned_data.get("distance_km")
-            if distance:
+            address = cleaned_data.get("address")
+            phone = cleaned_data.get("phone")
+
+            # Sincronizar instancia para que la validación del modelo (full_clean) pase
+            if distance is not None: self.instance.distance_km = distance
+            if address: self.instance.address = address
+            if phone: self.instance.phone = phone
+
+            if distance is not None:
                 # Cálculos automáticos seguros
                 cleaned_data["delivery_fee"] = calculate_fee(distance)
                 cleaned_data["estimated_time_min"] = estimate_time(distance)
+                self.instance.delivery_fee = cleaned_data["delivery_fee"]
+                self.instance.estimated_time_min = cleaned_data["estimated_time_min"]
             return cleaned_data
         except Exception as e:
             raise forms.ValidationError(f"Error en el cálculo de logística: {str(e)}")

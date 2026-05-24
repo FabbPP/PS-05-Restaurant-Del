@@ -5,6 +5,7 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from apps.delivery.models import DeliveryInfo, Courier
 from apps.core.enums import OrderStatus, CourierStatus
+from apps.core.utils import quantize_money
 
 BASE_FEE = Decimal("5.00")
 PER_KM_FEE = Decimal("1.00")
@@ -19,8 +20,8 @@ class RepartidorNoDisponibleError(Exception):
 
 
 def calculate_fee(distance_km: Decimal) -> Decimal:
-    if distance_km < 0: return BASE_FEE
-    return BASE_FEE + (PER_KM_FEE * distance_km)
+    if distance_km < 0: return quantize_money(BASE_FEE)
+    return quantize_money(BASE_FEE + (PER_KM_FEE * distance_km))
 
 
 def estimate_time(distance_km: Decimal) -> int:
